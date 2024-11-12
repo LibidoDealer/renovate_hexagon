@@ -129,7 +129,19 @@
               beginAtZero: true,
               min: 1,
               max: 10,
-              stepSize: 1
+              stepSize: 1,
+              // 修改刻度线以显示1-10
+              callback: function(value) {
+                return Number.isInteger(value) ? value : null;
+              }
+            },
+            // 将刻度分成10个区块
+            gridLines: {
+              circular: true,
+              color: '#ddd'
+            },
+            pointLabels: {
+              fontSize: 14  // 标签字体大小
             }
           }
         }
