@@ -48,20 +48,15 @@
   <script>
     let radarChart;
 
-    function createChart(data) {
+    function initializeChart() {
       const ctx = document.getElementById('radar-chart').getContext('2d');
-
-      if (radarChart) {
-        radarChart.destroy(); // 销毁之前的图表
-      }
-
       radarChart = new Chart(ctx, {
         type: 'radar',
         data: {
           labels: ['a', 'b', 'c', 'd', 'e', 'f'],
           datasets: [{
             label: '维度评分',
-            data: data,
+            data: [5, 5, 5, 5, 5, 5], // 初始数据
             backgroundColor: 'rgba(54, 162, 235, 0.2)',
             borderColor: 'rgba(54, 162, 235, 1)',
             borderWidth: 2,
@@ -93,15 +88,13 @@
         document.getElementById('f').value
       ];
 
-      // 更新图表数据
-      createChart(data);
+      // 更新图表数据并重新绘制
+      radarChart.data.datasets[0].data = data;
+      radarChart.update();
     }
 
-    // 页面加载时创建初始图表
-    window.onload = function() {
-      const initialData = [5, 5, 5, 5, 5, 5]; // 初始数据
-      createChart(initialData);
-    };
+    // 页面加载时初始化图表
+    window.onload = initializeChart;
   </script>
 </body>
 </html>
