@@ -9,94 +9,99 @@
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      padding: 50px;
+      padding: 20px;
     }
     #radar-chart {
       max-width: 600px;
-      margin: 0 auto;
+      margin: 0 auto 30px;
     }
-    label {
-      font-weight: bold;
-      margin: 10px 0;
-      display: inline-block;
-    }
-    .form-group {
+    .slider-group {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
       margin-bottom: 20px;
     }
-    input {
-      width: 50px;
-      padding: 5px;
-      text-align: center;
-      font-size: 16px;
+    .slider-group label {
+      font-weight: bold;
+      margin: 10px;
+    }
+    .slider-group input[type="range"] {
+      width: 150px;
     }
   </style>
 </head>
 <body>
 
   <h1>六边形图生成器</h1>
-  <div class="form-group">
-    <label for="a">a: </label>
-    <input type="number" id="a" min="1" max="10" value="5">
-    <label for="b">b: </label>
-    <input type="number" id="b" min="1" max="10" value="5">
-    <label for="c">c: </label>
-    <input type="number" id="c" min="1" max="10" value="5">
-    <label for="d">d: </label>
-    <input type="number" id="d" min="1" max="10" value="5">
-    <label for="e">e: </label>
-    <input type="number" id="e" min="1" max="10" value="5">
-    <label for="f">f: </label>
-    <input type="number" id="f" min="1" max="10" value="5">
+  
+  <div class="slider-group">
+    <label for="a">a: <input type="range" id="a" min="1" max="10" value="5" oninput="updateChart()"></label>
+    <label for="b">b: <input type="range" id="b" min="1" max="10" value="5" oninput="updateChart()"></label>
+    <label for="c">c: <input type="range" id="c" min="1" max="10" value="5" oninput="updateChart()"></label>
+    <label for="d">d: <input type="range" id="d" min="1" max="10" value="5" oninput="updateChart()"></label>
+    <label for="e">e: <input type="range" id="e" min="1" max="10" value="5" oninput="updateChart()"></label>
+    <label for="f">f: <input type="range" id="f" min="1" max="10" value="5" oninput="updateChart()"></label>
   </div>
 
-  <button onclick="generateChart()">生成六边形图</button>
-
-  <canvas id="radar-chart"></canvas>
+  <canvas id="radar-chart" width="600" height="600"></canvas>
 
   <script>
-    // 创建雷达图函数
-    function generateChart() {
-      const a = document.getElementById('a').value;
-      const b = document.getElementById('b').value;
-      const c = document.getElementById('c').value;
-      const d = document.getElementById('d').value;
-      const e = document.getElementById('e').value;
-      const f = document.getElementById('f').value;
+    let radarChart;
 
+    function createChart(data) {
       const ctx = document.getElementById('radar-chart').getContext('2d');
 
-      const data = {
-        labels: ['a', 'b', 'c', 'd', 'e', 'f'],
-        datasets: [{
-          label: '维度评分',
-          data: [a, b, c, d, e, f],
-          backgroundColor: 'rgba(255, 99, 132, 0.2)',
-          borderColor: 'rgba(255, 99, 132, 1)',
-          borderWidth: 1
-        }]
-      };
-
-      const options = {
-        scale: {
-          ticks: {
-            beginAtZero: true,
-            max: 10
-          }
-        },
-        responsive: true,
-        maintainAspectRatio: false
-      };
-
-      if (window.radarChart) {
-        window.radarChart.destroy();
+      if (radarChart) {
+        radarChart.destroy(); // 销毁之前的图表
       }
 
-      window.radarChart = new Chart(ctx, {
+      radarChart = new Chart(ctx, {
         type: 'radar',
-        data: data,
-        options: options
+        data: {
+          labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+          datasets: [{
+            label: '维度评分',
+            data: data,
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 2,
+          }]
+        },
+        options: {
+          scale: {
+            ticks: {
+              beginAtZero: true,
+              min: 1,
+              max: 10,
+              stepSize: 1
+            }
+          },
+          responsive: true,
+          maintainAspectRatio: false
+        }
       });
     }
+
+    function updateChart() {
+      // 获取所有滑块的值
+      const data = [
+        document.getElementById('a').value,
+        document.getElementById('b').value,
+        document.getElementById('c').value,
+        document.getElementById('d').value,
+        document.getElementById('e').value,
+        document.getElementById('f').value
+      ];
+
+      // 更新图表数据
+      createChart(data);
+    }
+
+    // 页面加载时创建初始图表
+    window.onload = function() {
+      const initialData = [5, 5, 5, 5, 5, 5]; // 初始数据
+      createChart(initialData);
+    };
   </script>
 </body>
 </html>
