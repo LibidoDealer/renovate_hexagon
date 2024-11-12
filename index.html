@@ -34,6 +34,16 @@
     .slider-group input[type="range"] {
       width: 200px;
     }
+    .slider-group .rating-text {
+      margin-top: 5px;
+      font-size: 0.9em;
+      color: #555;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -41,13 +51,33 @@
   <h1>装修维度优先级图表</h1>
   
   <div class="slider-group">
-    <label for="a">性价比: <input type="range" id="a" min="1" max="10" value="5" oninput="updateChart()"></label>
-    <label for="b">设计感: <input type="range" id="b" min="1" max="10" value="5" oninput="updateChart()"></label>
-    <label for="c">舒适度: <input type="range" id="c" min="1" max="10" value="5" oninput="updateChart()"></label>
-    <label for="d">耐用性: <input type="range" id="d" min="1" max="10" value="5" oninput="updateChart()"></label>
-    <label for="e">环保性: <input type="range" id="e" min="1" max="10" value="5" oninput="updateChart()"></label>
-    <label for="f">施工质量: <input type="range" id="f" min="1" max="10" value="5" oninput="updateChart()"></label>
+    <label for="a">性价比: 
+      <input type="range" id="a" min="1" max="10" value="5" oninput="updateRating('a')">
+      <span class="rating-text" id="rating-a">中等</span>
+    </label>
+    <label for="b">设计感: 
+      <input type="range" id="b" min="1" max="10" value="5" oninput="updateRating('b')">
+      <span class="rating-text" id="rating-b">中等</span>
+    </label>
+    <label for="c">舒适度: 
+      <input type="range" id="c" min="1" max="10" value="5" oninput="updateRating('c')">
+      <span class="rating-text" id="rating-c">中等</span>
+    </label>
+    <label for="d">耐用性: 
+      <input type="range" id="d" min="1" max="10" value="5" oninput="updateRating('d')">
+      <span class="rating-text" id="rating-d">中等</span>
+    </label>
+    <label for="e">环保性: 
+      <input type="range" id="e" min="1" max="10" value="5" oninput="updateRating('e')">
+      <span class="rating-text" id="rating-e">中等</span>
+    </label>
+    <label for="f">施工质量: 
+      <input type="range" id="f" min="1" max="10" value="5" oninput="updateRating('f')">
+      <span class="rating-text" id="rating-f">中等</span>
+    </label>
   </div>
+
+  <button onclick="generateChart()">生成图表</button>
 
   <div id="radar-chart-container">
     <canvas id="radar-chart"></canvas>
@@ -56,7 +86,28 @@
   <script>
     let radarChart;
 
-    function initializeChart() {
+    // 定义每个数值的评级文字
+    const ratings = {
+      1: "非常低",
+      2: "较低",
+      3: "偏低",
+      4: "中等偏低",
+      5: "中等",
+      6: "中等偏高",
+      7: "较高",
+      8: "高",
+      9: "非常高",
+      10: "极高"
+    };
+
+    // 更新评级文字
+    function updateRating(id) {
+      const value = document.getElementById(id).value;
+      document.getElementById(`rating-${id}`).innerText = ratings[value];
+    }
+
+    // 初始化图表
+    function initializeChart(data) {
       const ctx = document.getElementById('radar-chart').getContext('2d');
       radarChart = new Chart(ctx, {
         type: 'radar',
@@ -64,14 +115,14 @@
           labels: ['性价比', '设计感', '舒适度', '耐用性', '环保性', '施工质量'],
           datasets: [{
             label: '装修维度优先级',
-            data: [5, 5, 5, 5, 5, 5], // 初始数据
+            data: data,
             backgroundColor: 'rgba(54, 162, 235, 0.2)',
             borderColor: 'rgba(54, 162, 235, 1)',
             borderWidth: 2,
           }]
         },
         options: {
-          responsive: false,  // 禁用响应式布局，避免图表移动
+          responsive: false,  // 禁用响应式布局
           maintainAspectRatio: false,  // 禁用长宽比保持
           scale: {
             ticks: {
@@ -85,7 +136,8 @@
       });
     }
 
-    function updateChart() {
+    // 生成图表
+    function generateChart() {
       // 获取所有滑块的值
       const data = [
         document.getElementById('a').value,
@@ -96,13 +148,20 @@
         document.getElementById('f').value
       ];
 
-      // 更新图表数据并重新绘制
-      radarChart.data.datasets[0].data = data;
-      radarChart.update();
+      // 如果已有图表，先销毁以防止重复绘制
+      if (radarChart) {
+        radarChart.destroy();
+      }
+
+      // 初始化新图表
+      initializeChart(data);
     }
 
-    // 页面加载时初始化图表
-    window.onload = initializeChart;
+    // 初始化页面默认评级
+    window.onload = function() {
+      ["a", "b", "c", "d", "e", "f"].forEach(updateRating);
+      initializeChart([5, 5, 5, 5, 5, 5]);  // 设置默认数据
+    };
   </script>
 </body>
 </html>
