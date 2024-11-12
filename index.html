@@ -11,8 +11,9 @@
       text-align: center;
       padding: 20px;
     }
-    #radar-chart {
-      max-width: 600px;
+    #radar-chart-container {
+      width: 600px;
+      height: 600px;
       margin: 0 auto 30px;
     }
     .slider-group {
@@ -43,7 +44,9 @@
     <label for="f">f: <input type="range" id="f" min="1" max="10" value="5" oninput="updateChart()"></label>
   </div>
 
-  <canvas id="radar-chart" width="600" height="600"></canvas>
+  <div id="radar-chart-container">
+    <canvas id="radar-chart"></canvas>
+  </div>
 
   <script>
     let radarChart;
@@ -63,6 +66,8 @@
           }]
         },
         options: {
+          responsive: false,  // 禁用响应式，以防止图表向下错位
+          maintainAspectRatio: false,  // 禁用长宽比保持
           scale: {
             ticks: {
               beginAtZero: true,
@@ -70,9 +75,7 @@
               max: 10,
               stepSize: 1
             }
-          },
-          responsive: true,
-          maintainAspectRatio: false
+          }
         }
       });
     }
